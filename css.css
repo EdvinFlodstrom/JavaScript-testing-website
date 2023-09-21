@@ -1,3 +1,7 @@
+body {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    background-color: green;
+}
 #coolButton{
     color:blueviolet;
     font-size: 25px;
@@ -46,5 +50,42 @@ button:hover{
 #summarize {
     display: grid;
     justify-content: center;
+    font-size: 30px;
+}
+.blackjack{
+    text-align: center;
+    font-size: 30px;
+}
+.blackjack h1 {
+    color: goldenrod;
+}
+p {
+    color: white;
+}
+#begin, #stand, #hit, #doubleUp, #split {
+    color: #016f32;
+    width: 115px;
+    background: red;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 15px;
+}
+#plus10, #plus100, #minus10, #minus100 {
+    color: #016f32;
+    width: 100px;
+    background: yellow;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 15px;
+}
+#begin {
+    background: red;
+    margin-bottom: 10px;
     font-size: 30px;
 }
