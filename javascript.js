@@ -5,7 +5,6 @@ function init()
 {
     console.log('Page has been loaded');
 
-
     //BlackJack
     
     let startingCapital = 200;
@@ -24,6 +23,7 @@ function init()
     let blackjack = false;
     let dealerBlackjack = false;
     let timeToReset = false;
+    let dealerTurn = false;
 
     let spades = [2,3,4,5,6,7,8,9,10,'J','Q','K','A'];
     let clubs = [2,3,4,5,6,7,8,9,10,'J','Q','K','A'];
@@ -288,6 +288,7 @@ function init()
                     pBegin.innerHTML = `Hand 2 got 21.`;
                 }
                 prepareToDeal();
+                return;
             }
             else {
                 determineOptions(secondHandDeck);
@@ -296,7 +297,7 @@ function init()
         }    
     }
 
-    function disableAllArrayOptions() {
+    function disableAllArrayOptions() {        
         for (let index = 0; index < allOptionsArray.length; index++) {
             const element = allOptionsArray[index];
             element.style.backgroundColor = 'red';
@@ -330,6 +331,7 @@ function init()
         if (!canBegin) {
             return;
         }
+        dealerTurn = false;
         timeToReset = false;
         blackjack = false;
         dealerBlackjack = false;
@@ -350,7 +352,8 @@ function init()
         begin.style.backgroundColor = 'red';
 
         deck = [randomCard(spades, clubs, diamonds, hearts)];
-        deck.push(addCardToDeck(deck, dealerDeck, spades, clubs, diamonds, hearts));
+        //deck = [['spades', 'A']]; //Fixa duplicates?
+        deck.push(addCardToDeck(deck, dealerDeck, spades, clubs, diamonds, hearts));        
         pCards.innerHTML = `Cards: ${(deck[0])[1]}${((deck[0])[0][0])}; ${(deck[1])[1]}${((deck[1])[0])[0]}`;
         points = sumPoints(deck);
         pPoints.innerHTML = `Points: ${points}`;
@@ -359,6 +362,7 @@ function init()
             pBegin.innerHTML = `Blackjack!`;
             blackjack = true;
             prepareToDeal();
+            return;
         }
         else {
             pBegin.innerHTML = `Choose your option.`
@@ -426,13 +430,7 @@ function init()
         let sum = 0;
         for (let index = 0; index < deck.length; index++) {
             const card = (deck[index]);
-            if (card[1] === 'J') {
-                sum += 10;
-            }
-            else if (card[1] === 'Q') {
-                sum += 10;
-            }
-            else if (card[1] === 'K') {
+            if (card[1] === 'J' || card[1] === 'Q' || card[1] === 'K') {
                 sum += 10;
             }
             else if (card[1] === 'A') {
@@ -452,26 +450,43 @@ function init()
     }
 
     function addCardToDeck(deck, dealerDeck, set1, set2, set3, set4) {
-        let newCard = randomCard(set1, set2, set3, set4); 
-
-        for (let index = 0; index < deck.length; index++) {
-            const element = deck[index];
-
-            if (newCard === element) {
-                newCard = randomCard(set1, set2, set3, set4);
-                index = 0;
+        let newCard = randomCard(set1, set2, set3, set4);
+        let goodCard = false;
+        let dealerFirstCard = true;
+        
+        while (!goodCard) {            
+            goodCard = true;
+            for (let index = 0; index < deck.length; index++) {
+                let element = deck[index];
+                if (dealerTurn) {
+                    if (!dealerFirstCard) {
+                        element = dealerDeck[index];
+                        dealerFirstCard = false;
+                    }
+                }
+                if (newCard[0] === element[0] && newCard[1] === element[1]) {
+                    goodCard = false;
+                    newCard = randomCard(set1, set2, set3, set4);
+                }
+            }
+            
+            if (dealerTurn) {
+                for (let index = 0; index < dealerDeck.length; index++) {
+                    let element = dealerDeck[index];
+                    if (dealerTurn) {
+                        if (!dealerFirstCard) {
+                            element = dealerDeck[index];
+                            dealerFirstCard = false;
+                        }
+                    }
+        
+                    if (newCard[0] === element[0] && newCard[1] === element[1]) {
+                        goodCard = false;
+                        newCard = randomCard(set1, set2, set3, set4);                  
+                    }
+                }
             }
         }
-
-        for (let index = 0; index < dealerDeck.length; index++) {
-            const element = dealerDeck[index];
-
-            if (newCard === element) {
-                newCard = randomCard(set1, set2, set3, set4);
-                index = 0;
-            }
-        }
-
         return newCard;
     }
 
@@ -602,6 +617,7 @@ function init()
     function prepareToDeal() {
         disableAllArrayOptions();
         pBegin.innerHTML = `Now, it's the dealer's turn.`;
+        dealerTurn = true;
         setTimeout(function() {
             dealer();
         }, 2000);
